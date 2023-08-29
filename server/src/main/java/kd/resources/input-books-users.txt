@@ -1,0 +1,16 @@
+5
+Concurrent Programming
+C. R. Snow
+Concurrent Programming
+Stephen J. Hartley
+Java Gently
+Judith Bishop
+Petri Nets
+Wolfgang Reisig
+Finite Transition Systems
+Andre Arnold
+4
+Anna Smith
+Zoe Brown
+John Williams
+John Smith
