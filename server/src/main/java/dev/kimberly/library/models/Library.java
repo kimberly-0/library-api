@@ -1,101 +1,41 @@
-package kd;
+package dev.kimberly.library.models;
+
+import dev.kimberly.library.SortedArrayList;
 
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import kd.models.*;
+public class Library {
 
-/**
- * <h2>Library management system</h2>
- * This project is an interactive library management system with a command line
- * interface. The program enables the importing of books and users from a file,
- * and enables the system user to issue and return books.
- *
- * The IO class manages the input and output of the program, i.e. the command
- * line interface menus, the user's response, and the printed results.
- * 
- * @author Kimberly Dijkmans
- */
-public class IO {
+    private final SortedArrayList<Book> books = new SortedArrayList<>();
+    private final SortedArrayList<User> users = new SortedArrayList<>();
 
-    private SortedArrayList<Book> books = new SortedArrayList<>();
-    private SortedArrayList<User> users = new SortedArrayList<>();
+    public SortedArrayList<Book> getBooks() {
+        return books;
+    }
 
-    boolean addBook(Book book) {
+    public SortedArrayList<User> getUsers() {
+        return users;
+    }
+
+    public void addBook(Book book) {
         for (Book u : books) {
             if (u.equals(book))
-                return false; // book already exists
+                return; // book already exists
         }
         books.insert(book);
-        return true;
     }
 
-    boolean addUser(User user) {
+    public void addUser(User user) {
         for (User u : users) {
             if (u.equals(user))
-                return false; // user already exists
+                return; // user already exists
         }
         users.insert(user);
-        return true;
     }
 
-    public void runMenu(PrintWriter outFile) {
-        Scanner scanner = new Scanner(System.in);
-        boolean quit = false;
-        while (!quit) {
 
-            printMenu();
-
-            char choice = scanner.next().charAt(0);
-            scanner.nextLine(); // Retrieving enter to make sure the next reading is from the next line
-
-            switch (choice) {
-                case 'f': // Finish running the program
-                    System.out.printf("%n%s%n", "Closing the program ...");
-                    quit = true;
-                    scanner.close();
-                    break;
-                case 'b': // List information about all books in library
-                    listItems(books);
-                    break;
-                case 'u': // List information about al users
-                    listItems(users);
-                    break;
-                case 'i': // Issue a book
-                    issueBook(scanner, outFile);
-                    break;
-                case 'r': // Return a book
-                    returnBook(scanner);
-                    break;
-                default:
-                    System.out.println("Invalid entry, try again");
-            }
-        }
-    }
-
-    private static void printMenu() {
-        System.out.printf("%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n%s%n",
-                "--------- MENU ---------",
-                "f - finish",
-                "b - list all books",
-                "u - list all users",
-                "i - issue a book",
-                "r - return a book",
-                "------------------------",
-                "Type a letter and press Enter");
-    }
-
-    private <E extends Comparable<E>> void listItems(SortedArrayList<E> e) {
-        System.out.print(System.lineSeparator());
-        if (e.size() > 0) {
-            for (E elem : e)
-                System.out.println(elem);
-        } else {
-            System.out.println("No items found");
-        }
-    }
-
-    void issueBook(Scanner scanner, PrintWriter outFile) {
+    public void issueBook(Scanner scanner, PrintWriter outFile) {
         System.out.printf("%n%s%n%s%n", "ISSUE A BOOK", "--------------");
 
         User selectedUser;
@@ -136,7 +76,7 @@ public class IO {
         }
     }
 
-    private void returnBook(Scanner scanner) {
+    public void returnBook(Scanner scanner) {
         System.out.printf("%n%s%n%s%n", "RETURN A BOOK", "--------------");
 
         User selectedUser;
@@ -169,6 +109,7 @@ public class IO {
         }
     }
 
+
     private User validateUser(Scanner scanner) throws Exception {
         System.out.println("Enter the user's first name:");
         String userFirstName = scanner.nextLine().trim();
@@ -180,7 +121,7 @@ public class IO {
 
         int timesToRetry = 1;
         while (!validUser) {
-            for (User u : users) {
+            for (User u : this.getUsers()) {
                 if (u.getFirstName().equalsIgnoreCase(userFirstName)
                         && u.getSurname().equalsIgnoreCase(userSurname)) {
                     selectedUser = u;
@@ -215,7 +156,7 @@ public class IO {
 
         int timesToRetry = 1;
         while (!validBook) {
-            for (Book b : books) {
+            for (Book b : this.getBooks()) {
                 if (b.getTitle().equalsIgnoreCase(bookTitle)
                         && b.getAuthorSurname().equalsIgnoreCase(bookAuthorSurname)) {
                     selectedBook = b;
@@ -251,42 +192,6 @@ public class IO {
             file.println(" ");
         } else {
             System.out.println("Unable to write return request, file not found");
-        }
-    }
-
-    /**
-     * This method is the main method to run to start the program
-     * 
-     * @param args The command line arguments
-     */
-    public static void main(String[] args) {
-        IO io = new IO();
-
-        /*
-         * Import books and users from file
-         */
-        new ImportFile().importBooksAndUsersFromFile("resources/input-books-users.txt", io);
-
-        /*
-         * Create new output file to write return requests to
-         */
-        PrintWriter outFile = null;
-        try {
-            outFile = new PrintWriter("src/main/java/kd/resources/return-requests.txt");
-        } catch (Exception e) {
-            System.out.println("Unable to create output file for return requests.");
-        }
-
-        /*
-         * Run the command line interface menu
-         */
-        io.runMenu(outFile);
-
-        /*
-         * Close and save output file with return requests
-         */
-        if (outFile != null) {
-            outFile.close();
         }
     }
 

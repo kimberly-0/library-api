@@ -1,4 +1,4 @@
-package kd;
+package dev.kimberly.library;
 
 import java.util.ArrayList;
 
@@ -9,8 +9,6 @@ import java.util.ArrayList;
  * The generic class SortedArrayList restricts the type parameter to
  * ArrayList<E> classes and the elements in the SortedArrayList (in this case
  * Users or Books) must implement the Comparable<E> interface.
- * 
- * @author Kimberly Dijkmans
  */
 public class SortedArrayList<E extends Comparable<E>> extends ArrayList<E> {
 

@@ -1,16 +1,17 @@
-package kd;
+package dev.kimberly.library;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
-import kd.models.*;
+import dev.kimberly.library.models.Book;
+import dev.kimberly.library.models.Library;
+import dev.kimberly.library.models.User;
 
 /**
  * The ImportFile class is responsible for importing books and users from a
  * file.
- * 
- * @author Kimberly Dijkmans
  */
 public class ImportFile {
 
@@ -18,18 +19,20 @@ public class ImportFile {
      * This method imports books and users from a file
      * 
      * @param fileURI The URI of the file containing books and users to import
-     * @param io      The io (input/output) instance that stores the lists of books
+     * @param library      The io (input/output) instance that stores the lists of books
      *                and users
      */
-    public void importBooksAndUsersFromFile(String fileURI, IO io) {
+    public void importBooksAndUsersFromFile(String fileURI, Library library) {
         if (fileURI != null) {
             try {
                 // Create a file object from the given URI
-                File file = new File(ImportFile.class.getResource(fileURI).getFile());
+                File file = new File(Objects.requireNonNull(ImportFile.class.getResource(fileURI)).getFile());
 
                 // Read file, parse lines, create Book and User objects and add it to the
                 // records
-                parser(readFile(file), io);
+                parser(Objects.requireNonNull(readFile(file)), library);
+
+                System.out.println("Import successful");
 
             } catch (Exception e) {
                 System.out.println("Unable to import from file");
@@ -62,7 +65,7 @@ public class ImportFile {
      * This method takes each line from the array list, parses it, creates Book and
      * User objects from the information and adds it to the records
      */
-    private void parser(ArrayList<String> records, IO io) {
+    private void parser(ArrayList<String> records, Library library) {
 
         int numOfBooks = Integer.parseInt(records.get(0));
         int numOfUsers = Integer.parseInt(records.get((numOfBooks * 2) + 1));
@@ -76,7 +79,7 @@ public class ImportFile {
             String authorSurname = authorName[authorName.length - 1].trim();
             String authorFirstName = records.get(i + 1).replace(authorSurname, "").trim();
 
-            io.addBook(new Book(title, authorFirstName, authorSurname, false, null));
+            library.addBook(new Book(title, authorFirstName, authorSurname, false, null));
         }
 
         int currentLine = (numOfBooks * 2) + 2; // set current line
@@ -91,7 +94,7 @@ public class ImportFile {
 
             currentLine++;
 
-            io.addUser(new User(firstName, surname, 0));
+            library.addUser(new User(firstName, surname, 0));
         }
     }
 

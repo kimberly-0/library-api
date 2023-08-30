@@ -1,13 +1,10 @@
-package kd.models;
+package dev.kimberly.library.models;
 
-/**
- * The Book class is responsible for creating an Book object.
- * 
- * @author Kimberly Dijkmans
- */
 public class Book implements Comparable<Book> {
 
-    private String title, authorFirstName, authorSurname;
+    private final String title;
+    private final String authorFirstName;
+    private final String authorSurname;
     private boolean onLoan;
     private User borrower;
 
@@ -62,11 +59,7 @@ public class Book implements Comparable<Book> {
      */
     @Override
     public int compareTo(Book b) {
-        int snCmp = authorSurname.compareTo(b.authorSurname);
-        if (snCmp != 0)
-            return snCmp;
-        else
-            return 0;
+        return authorSurname.compareTo(b.authorSurname);
     }
 
     /**
@@ -101,10 +94,9 @@ public class Book implements Comparable<Book> {
         if (this == obj)
             return true;
 
-        if (!(obj instanceof Book))
+        if (!(obj instanceof Book user))
             return false;
 
-        final Book user = (Book) obj;
         return title.equals(user.title)
                 && authorFirstName.equals(user.authorFirstName)
                 && authorSurname.equals(user.authorSurname)
