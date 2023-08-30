@@ -1,13 +1,11 @@
-package kd.models;
+package dev.kimberly.library.models;
 
-/**
- * The User class is responsible for creating an User object.
- * 
- * @author Kimberly Dijkmans
- */
+import java.util.Objects;
+
 public class User implements Comparable<User> {
 
-    private String firstName, surname;
+    private final String firstName;
+    private final String surname;
     private Integer numOfBooks;
 
     public User(String firstName, String surname) {
@@ -49,11 +47,7 @@ public class User implements Comparable<User> {
         int snCmp = surname.compareTo(u.surname);
         if (snCmp != 0)
             return snCmp;
-        int fnCmp = firstName.compareTo(u.firstName);
-        if (fnCmp != 0)
-            return fnCmp;
-        else
-            return 0;
+        return firstName.compareTo(u.firstName);
     }
 
     /**
@@ -84,13 +78,12 @@ public class User implements Comparable<User> {
         if (this == obj)
             return true;
 
-        if (!(obj instanceof User))
+        if (!(obj instanceof User user))
             return false;
 
-        final User user = (User) obj;
         return firstName.equals(user.firstName)
                 && surname.equals(user.surname)
-                && numOfBooks == user.numOfBooks;
+                && Objects.equals(numOfBooks, user.numOfBooks);
     }
 
 }
