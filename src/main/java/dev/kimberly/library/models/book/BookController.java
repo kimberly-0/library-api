@@ -19,12 +19,12 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllMovies() {
+    public ResponseEntity<List<Book>> getAllBooks() {
         return new ResponseEntity<List<Book>>(bookService.allBooks(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Book>> getSingleMovieById(@PathVariable ObjectId id) {
+    public ResponseEntity<Optional<Book>> getSingleBookById(@PathVariable ObjectId id) {
         return new ResponseEntity<Optional<Book>>(bookService.singleBook(id), HttpStatus.OK);
     }
 
