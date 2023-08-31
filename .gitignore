@@ -35,5 +35,9 @@ build/
 ### ENV Files ###
 .env
 
-## Mac OS
+### Mac OS ###
 .DS_Store
+
+### Temp user and book data in JSON files ###
+books.json
+users.json
