@@ -32,4 +32,9 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload) {
         return new ResponseEntity<User>(userService.createUser(payload.get("firstName"), payload.get("surname")), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Optional<User>> createUser(@PathVariable ObjectId id) {
+        return new ResponseEntity<Optional<User>>(userService.removeUser(id), HttpStatus.ACCEPTED);
+    }
 }
