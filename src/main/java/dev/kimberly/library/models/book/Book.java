@@ -1,10 +1,24 @@
-package dev.kimberly.library.models;
+package dev.kimberly.library.models.book;
 
+import dev.kimberly.library.models.user.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "books")
+@Data // creates getters and setters
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book implements Comparable<Book> {
 
-    private final String title;
-    private final String authorFirstName;
-    private final String authorSurname;
+    @Id
+    private ObjectId id;
+    private String title;
+    private String authorFirstName;
+    private String authorSurname;
     private boolean onLoan;
     private User borrower;
 
@@ -22,26 +36,6 @@ public class Book implements Comparable<Book> {
         this.authorSurname = authorSurname;
         this.onLoan = onLoan;
         this.borrower = borrower;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthorFirstName() {
-        return authorFirstName;
-    }
-
-    public String getAuthorSurname() {
-        return authorSurname;
-    }
-
-    public boolean isOnLoan() {
-        return onLoan;
-    }
-
-    public User getBorrower() {
-        return borrower;
     }
 
     public void setOnLoan(boolean b) {

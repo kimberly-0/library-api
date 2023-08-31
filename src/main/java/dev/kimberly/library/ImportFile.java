@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-import dev.kimberly.library.models.Book;
+import dev.kimberly.library.models.book.Book;
 import dev.kimberly.library.models.Library;
-import dev.kimberly.library.models.User;
+import dev.kimberly.library.models.user.User;
 
 /**
  * The ImportFile class is responsible for importing books and users from a

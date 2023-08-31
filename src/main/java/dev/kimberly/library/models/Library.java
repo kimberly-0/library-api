@@ -1,6 +1,8 @@
 package dev.kimberly.library.models;
 
 import dev.kimberly.library.SortedArrayList;
+import dev.kimberly.library.models.book.Book;
+import dev.kimberly.library.models.user.User;
 
 import java.io.PrintWriter;
 import java.util.Scanner;

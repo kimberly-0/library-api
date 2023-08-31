@@ -1,11 +1,24 @@
-package dev.kimberly.library.models;
+package dev.kimberly.library.models.user;
 
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "users")
+@Data // creates getters and setters
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Comparable<User> {
 
-    private final String firstName;
-    private final String surname;
+    @Id
+    private ObjectId id;
+    private String firstName;
+    private String surname;
     private Integer numOfBooks;
 
     public User(String firstName, String surname) {
@@ -18,14 +31,6 @@ public class User implements Comparable<User> {
         this.firstName = firstName;
         this.surname = surname;
         this.numOfBooks = numOfBooks;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getSurname() {
-        return surname;
     }
 
     public int getNumOfBooks() {
