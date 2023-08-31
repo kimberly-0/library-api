@@ -16,7 +16,7 @@
   <version>3.0</version>
   <name>library-management-system</name>
   <description>Full stack version of a previously developed library management system</description>
-  <url>https://github.com/kimberly-0/library-app</url>
+  <url>https://github.com/kimberly-0/library-api</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
