@@ -33,4 +33,9 @@ public class BookController {
         return new ResponseEntity<Book>(bookService.createBook(payload.get("title"), payload.get("authorFirstName"), payload.get("authorSurname")), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Optional<Book>> createBook(@PathVariable ObjectId id) {
+        return new ResponseEntity<Optional<Book>>(bookService.removeBook(id), HttpStatus.ACCEPTED);
+    }
+
 }
