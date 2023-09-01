@@ -20,22 +20,48 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        return new ResponseEntity<List<Book>>(bookService.allBooks(), HttpStatus.OK);
+        return new ResponseEntity<List<Book>>(bookService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Book>> getSingleBookById(@PathVariable ObjectId id) {
-        return new ResponseEntity<Optional<Book>>(bookService.singleBook(id), HttpStatus.OK);
+    public ResponseEntity<Book> getBookById(@PathVariable ObjectId id) {
+        return new ResponseEntity<Book>(bookService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Book>(bookService.createBook(payload.get("title"), payload.get("authorFirstName"), payload.get("authorSurname")), HttpStatus.CREATED);
+    public ResponseEntity<Book> addBook(@RequestBody Map<String, String> payload) {
+        Book book = new Book (payload.get("title"), payload.get("authorFirstName"), payload.get("authorSurname"));
+        return new ResponseEntity<Book>(bookService.save(book), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Optional<Book>> createBook(@PathVariable ObjectId id) {
-        return new ResponseEntity<Optional<Book>>(bookService.removeBook(id), HttpStatus.ACCEPTED);
+    public ResponseEntity<Void> deleteBook(@PathVariable ObjectId id) {
+        if (bookService.findById(id) != null) {
+            bookService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PutMapping("/{bookId}/issue/{userId}")
+    public ResponseEntity<Book> issueBook(@PathVariable ObjectId bookId, @PathVariable ObjectId userId) {
+        Book issuedBook = bookService.issueBook(bookId, userId);
+        if (issuedBook != null) {
+            return new ResponseEntity<Book>(issuedBook, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{bookId}/return/{userId}")
+    public ResponseEntity<Book> returnBook(@PathVariable ObjectId bookId, @PathVariable ObjectId userId) {
+        Book returnedBook = bookService.returnBook(bookId, userId);
+        if (returnedBook != null) {
+            return new ResponseEntity<Book>(returnedBook, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
