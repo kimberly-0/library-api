@@ -1,11 +1,13 @@
 package dev.kimberly.library.models.book;
 
 import dev.kimberly.library.models.user.User;
+import dev.kimberly.library.models.user.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,24 +19,55 @@ public class BookService {
     @Autowired // Spring Boot will instantiate class for us
     private BookRepository bookRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    @Autowired // Spring Boot will instantiate class for us
+    private UserRepository userRepository;
 
-    public List<Book> allBooks() {
+    public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> singleBook(ObjectId id) {
-        return bookRepository.findBookById(id);
+    public Book findById(ObjectId id) {
+        return bookRepository.findById(id).orElse(null);
     }
 
-    public Book createBook(String title, String authorFirstName, String authorSurname) {
-        return bookRepository.insert(new Book(title, authorFirstName, authorSurname));
+    public Book save(Book book) {
+        return bookRepository.save(book);
     }
 
-    public Optional<Book> removeBook(ObjectId id) {
-        Optional<Book> book = bookRepository.findBookById(id);
-        mongoTemplate.remove(new Query(Criteria.where("id").is(id)), Book.class);
-        return book;
+    public void deleteById(ObjectId id) {
+        bookRepository.deleteById(id);
     }
+
+    public Book issueBook(ObjectId bookId, ObjectId userId) {
+        Book book = findById(bookId);
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (book != null && !book.isOnLoan() && user != null) {
+            book.setBorrower(user);
+            book.setOnLoan(true);
+            user.setNumOfBooks(user.getNumOfBooks() + 1);
+            userRepository.save(user);
+            return save(book);
+        }
+
+        // Handle errors (e.g., book not found, book already borrowed, user not found)
+        return null;
+    }
+
+    public Book returnBook(ObjectId bookId, ObjectId userId) {
+        Book book = findById(bookId);
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (book != null && book.isOnLoan() && book.getBorrower().equals(user) && user.getNumOfBooks() > 0) {
+            book.setBorrower(null);
+            book.setOnLoan(false);
+            user.setNumOfBooks(user.getNumOfBooks() - 1);
+            userRepository.save(user);
+            return save(book);
+        }
+
+        // Handle errors (e.g., book not found, book already borrowed, user not found)
+        return null;
+    }
+
 }

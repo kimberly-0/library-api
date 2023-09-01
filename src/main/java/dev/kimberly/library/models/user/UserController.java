@@ -16,25 +16,31 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<List<User>>(userService.allUsers(), HttpStatus.OK);
+        return new ResponseEntity<List<User>>(userService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable ObjectId id) {
-        return new ResponseEntity<Optional<User>>(userService.singleUser(id), HttpStatus.OK);
+    public ResponseEntity<User> getUserById(@PathVariable ObjectId id) {
+        return new ResponseEntity<User>(userService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<User>(userService.createUser(payload.get("firstName"), payload.get("surname")), HttpStatus.CREATED);
+    public ResponseEntity<User> addUser(@RequestBody Map<String, String> payload) {
+        User user = new User(payload.get("firstName"), payload.get("surname"));
+        return new ResponseEntity<User>(userService.save(user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Optional<User>> createUser(@PathVariable ObjectId id) {
-        return new ResponseEntity<Optional<User>>(userService.removeUser(id), HttpStatus.ACCEPTED);
+    public ResponseEntity<Void> deleteUser(@PathVariable ObjectId id) {
+        if (userService.findById(id) != null) {
+            userService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 }
