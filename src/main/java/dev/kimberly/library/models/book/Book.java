@@ -1,10 +1,11 @@
 package dev.kimberly.library.models.book;
 
 import dev.kimberly.library.models.user.User;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,9 +16,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Book implements Comparable<Book> {
 
     @Id
-    private ObjectId id;
+    private String id;
+//    @NotNull(message = "Book title cannot be empty")
     private String title;
+//    @NotNull(message = "Author's first name cannot be empty")
     private String authorFirstName;
+//    @NotNull(message = "Author's surname cannot be empty")
     private String authorSurname;
     private boolean onLoan;
     private User borrower;
