@@ -1,7 +1,6 @@
 package dev.kimberly.library.models.book;
 
-import dev.kimberly.library.models.user.User;
-import org.bson.types.ObjectId;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -24,18 +22,33 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable ObjectId id) {
+    public ResponseEntity<Book> getBookById(@PathVariable String id) {
         return new ResponseEntity<Book>(bookService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Book> addBook(@Valid @RequestBody Map<String, String> payload) {
         Book book = new Book (payload.get("title"), payload.get("authorFirstName"), payload.get("authorSurname"));
         return new ResponseEntity<Book>(bookService.save(book), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> editBook(@Valid @PathVariable String id, @Valid @RequestBody Map<String, String> payload) {
+        Book book = bookService.findById(id);
+        if (payload.get("title") != null) {
+            book.setTitle(payload.get("title"));
+        }
+        if (payload.get("authorFirstName") != null) {
+            book.setAuthorFirstName(payload.get("authorFirstName"));
+        }
+        if (payload.get("authorSurname") != null) {
+            book.setAuthorSurname(payload.get("authorSurname"));
+        }
+        return new ResponseEntity<Book>(bookService.save(book), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable ObjectId id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
         if (bookService.findById(id) != null) {
             bookService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
@@ -45,7 +58,7 @@ public class BookController {
     }
 
     @PutMapping("/{bookId}/issue/{userId}")
-    public ResponseEntity<Book> issueBook(@PathVariable ObjectId bookId, @PathVariable ObjectId userId) {
+    public ResponseEntity<Book> issueBook(@Valid @PathVariable String bookId, @PathVariable String userId) {
         Book issuedBook = bookService.issueBook(bookId, userId);
         if (issuedBook != null) {
             return new ResponseEntity<Book>(issuedBook, HttpStatus.OK);
@@ -54,9 +67,9 @@ public class BookController {
         }
     }
 
-    @PutMapping("/{bookId}/return/{userId}")
-    public ResponseEntity<Book> returnBook(@PathVariable ObjectId bookId, @PathVariable ObjectId userId) {
-        Book returnedBook = bookService.returnBook(bookId, userId);
+    @PutMapping("/{bookId}/return")
+    public ResponseEntity<Book> returnBook(@Valid @PathVariable String bookId) {
+        Book returnedBook = bookService.returnBook(bookId);
         if (returnedBook != null) {
             return new ResponseEntity<Book>(returnedBook, HttpStatus.OK);
         } else {

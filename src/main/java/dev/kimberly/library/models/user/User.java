@@ -2,10 +2,12 @@ package dev.kimberly.library.models.user;
 
 import java.util.Objects;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,9 +18,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User implements Comparable<User> {
 
     @Id
-    private ObjectId id;
+    private String id;
+    @NotNull(message = "First name cannot be empty")
     private String firstName;
+    @NotNull(message = "Surname cannot be empty")
     private String surname;
+    @Size(max=3, min=0, message="A member can borrow a maximum of 3 books at one time")
+//    @Max(value=3, message="A member can borrow a maximum of 3 books at one time")
     private Integer numOfBooks;
 
     public User(String firstName, String surname) {

@@ -1,6 +1,7 @@
 package dev.kimberly.library.models.user;
 
-import org.bson.types.ObjectId;
+import dev.kimberly.library.models.book.Book;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +23,30 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable ObjectId id) {
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
         return new ResponseEntity<User>(userService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<User> addUser(@Valid @RequestBody Map<String, String> payload) {
         User user = new User(payload.get("firstName"), payload.get("surname"));
         return new ResponseEntity<User>(userService.save(user), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<User> editUser(@Valid @PathVariable String id, @Valid @RequestBody Map<String, String> payload) {
+        User user = userService.findById(id);
+        if (payload.get("firstName") != null) {
+            user.setFirstName(payload.get("firstName"));
+        }
+        if (payload.get("surname") != null) {
+            user.setSurname(payload.get("surname"));
+        }
+        return new ResponseEntity<User>(userService.save(user), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable ObjectId id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         if (userService.findById(id) != null) {
             userService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);

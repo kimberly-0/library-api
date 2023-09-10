@@ -2,16 +2,10 @@ package dev.kimberly.library.models.book;
 
 import dev.kimberly.library.models.user.User;
 import dev.kimberly.library.models.user.UserRepository;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BookService {
@@ -26,7 +20,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Book findById(ObjectId id) {
+    public Book findById(String id) {
         return bookRepository.findById(id).orElse(null);
     }
 
@@ -34,36 +28,52 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void deleteById(ObjectId id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
-    public Book issueBook(ObjectId bookId, ObjectId userId) {
+    public Book issueBook(String bookId, String userId) {
         Book book = findById(bookId);
         User user = userRepository.findById(userId).orElse(null);
 
         if (book != null && !book.isOnLoan() && user != null) {
-            book.setBorrower(user);
-            book.setOnLoan(true);
-            user.setNumOfBooks(user.getNumOfBooks() + 1);
-            userRepository.save(user);
-            return save(book);
+
+            // User is allowed to borrow a maximum of 3 books at one time
+//            if (user.getNumOfBooks() < 3) {
+                book.setBorrower(user);
+                book.setOnLoan(true);
+                user.setNumOfBooks(user.getNumOfBooks() + 1);
+                userRepository.save(user);
+                return save(book);
+//            } else {
+//                throw new Exception("Maximum number of books borrowed");
+//            }
+
+
         }
 
         // Handle errors (e.g., book not found, book already borrowed, user not found)
         return null;
     }
 
-    public Book returnBook(ObjectId bookId, ObjectId userId) {
+    public Book returnBook(String bookId) {
         Book book = findById(bookId);
-        User user = userRepository.findById(userId).orElse(null);
 
-        if (book != null && book.isOnLoan() && book.getBorrower().equals(user) && user.getNumOfBooks() > 0) {
-            book.setBorrower(null);
-            book.setOnLoan(false);
-            user.setNumOfBooks(user.getNumOfBooks() - 1);
-            userRepository.save(user);
-            return save(book);
+        if (book != null && book.isOnLoan() && book.getBorrower() != null) {
+
+            String userId = book.getBorrower().getId();
+            User user = userRepository.findById(userId).orElse(null);
+
+            if (user.getNumOfBooks() > 0) {
+
+                user.setNumOfBooks(user.getNumOfBooks() - 1);
+                userRepository.save(user);
+
+                book.setBorrower(null);
+                book.setOnLoan(false);
+
+                return save(book);
+            }
         }
 
         // Handle errors (e.g., book not found, book already borrowed, user not found)

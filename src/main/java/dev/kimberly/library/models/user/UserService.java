@@ -1,29 +1,28 @@
 package dev.kimberly.library.models.user;
 
-import dev.kimberly.library.models.book.Book;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+//    @Autowired
+    private final UserRepository userRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findById(ObjectId id) {
+    public User findById(String id) {
         return userRepository.findById(id).orElse(null);
     }
 
@@ -31,7 +30,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteById(ObjectId id) {
+    public void deleteById(String id) {
         userRepository.deleteById(id);
     }
 
