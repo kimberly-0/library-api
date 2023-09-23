@@ -1,7 +1,9 @@
-package dev.kimberly.library.models.book;
+package dev.kimberly.library.service;
 
-import dev.kimberly.library.models.user.User;
-import dev.kimberly.library.models.user.UserRepository;
+import dev.kimberly.library.models.Book;
+import dev.kimberly.library.models.User;
+import dev.kimberly.library.repository.BookRepository;
+import dev.kimberly.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

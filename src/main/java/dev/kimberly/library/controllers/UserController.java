@@ -1,6 +1,7 @@
-package dev.kimberly.library.models.user;
+package dev.kimberly.library.controllers;
 
-import dev.kimberly.library.models.book.Book;
+import dev.kimberly.library.models.User;
+import dev.kimberly.library.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -28,21 +28,23 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@Valid @RequestBody Map<String, String> payload) {
-        User user = new User(payload.get("firstName"), payload.get("surname"));
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         return new ResponseEntity<User>(userService.save(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> editUser(@Valid @PathVariable String id, @Valid @RequestBody Map<String, String> payload) {
-        User user = userService.findById(id);
-        if (payload.get("firstName") != null) {
-            user.setFirstName(payload.get("firstName"));
+    public ResponseEntity<User> editUser(@Valid @PathVariable String id, @Valid @RequestBody User user) {
+
+        User updatedUser = userService.findById(id);
+
+        if (user.getFirstName() != null && !user.getFirstName().trim().isEmpty()) {
+            updatedUser.setFirstName(user.getFirstName());
         }
-        if (payload.get("surname") != null) {
-            user.setSurname(payload.get("surname"));
+        if (user.getSurname() != null && !user.getSurname().trim().isEmpty()) {
+            updatedUser.setSurname(user.getSurname());
         }
-        return new ResponseEntity<User>(userService.save(user), HttpStatus.OK);
+
+        return new ResponseEntity<User>(userService.save(updatedUser), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

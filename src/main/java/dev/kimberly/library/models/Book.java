@@ -1,9 +1,8 @@
-package dev.kimberly.library.models.book;
+package dev.kimberly.library.models;
 
-import dev.kimberly.library.models.user.User;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -13,18 +12,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data // creates getters and setters
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Book implements Comparable<Book> {
 
     @Id
     private String id;
-//    @NotNull(message = "Book title cannot be empty")
+    @NotBlank(message = "Book title cannot be empty")
     private String title;
-//    @NotNull(message = "Author's first name cannot be empty")
+    @NotBlank(message = "Author's first name cannot be empty")
     private String authorFirstName;
-//    @NotNull(message = "Author's surname cannot be empty")
+    @NotBlank(message = "Author's surname cannot be empty")
     private String authorSurname;
     private boolean onLoan;
     private User borrower;
+    private String coverImageURL;
 
     public Book(String title, String authorFirstName, String authorSurname) {
         this.title = title;
@@ -32,22 +33,25 @@ public class Book implements Comparable<Book> {
         this.authorSurname = authorSurname;
         this.onLoan = false;
         this.borrower = null;
+        this.coverImageURL = null;
     }
 
-    public Book(String title, String authorFirstName, String authorSurname, boolean onLoan, User borrower) {
+    public Book(String title, String authorFirstName, String authorSurname, String coverImageURL) {
+        this.title = title;
+        this.authorFirstName = authorFirstName;
+        this.authorSurname = authorSurname;
+        this.onLoan = false;
+        this.borrower = null;
+        this.coverImageURL = coverImageURL;
+    }
+
+    public Book(String title, String authorFirstName, String authorSurname, boolean onLoan, User borrower, String coverImageURL) {
         this.title = title;
         this.authorFirstName = authorFirstName;
         this.authorSurname = authorSurname;
         this.onLoan = onLoan;
         this.borrower = borrower;
-    }
-
-    public void setOnLoan(boolean b) {
-        this.onLoan = b;
-    }
-
-    public void setBorrower(User u) {
-        this.borrower = u;
+        this.coverImageURL = coverImageURL;
     }
 
     /**

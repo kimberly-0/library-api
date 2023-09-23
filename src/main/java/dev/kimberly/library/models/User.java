@@ -1,11 +1,11 @@
-package dev.kimberly.library.models.user;
+package dev.kimberly.library.models;
 
 import java.util.Objects;
 
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -15,36 +15,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data // creates getters and setters
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User implements Comparable<User> {
 
     @Id
     private String id;
-    @NotNull(message = "First name cannot be empty")
+    @NotBlank(message = "First name cannot be empty")
     private String firstName;
-    @NotNull(message = "Surname cannot be empty")
+    @NotBlank(message = "Surname cannot be empty")
     private String surname;
-    @Size(max=3, min=0, message="A member can borrow a maximum of 3 books at one time")
-//    @Max(value=3, message="A member can borrow a maximum of 3 books at one time")
+    @Max(value=3, message="A member can borrow a maximum of 3 books at one time")
     private Integer numOfBooks;
 
     public User(String firstName, String surname) {
         this.firstName = firstName;
         this.surname = surname;
         this.numOfBooks = 0;
-    }
-
-    public User(String firstName, String surname, Integer numOfBooks) {
-        this.firstName = firstName;
-        this.surname = surname;
-        this.numOfBooks = numOfBooks;
-    }
-
-    public int getNumOfBooks() {
-        return numOfBooks;
-    }
-
-    public void setNumOfBooks(int i) {
-        this.numOfBooks = i;
     }
 
     /**

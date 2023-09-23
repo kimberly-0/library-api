@@ -1,5 +1,7 @@
-package dev.kimberly.library.models.user;
+package dev.kimberly.library.service;
 
+import dev.kimberly.library.models.User;
+import dev.kimberly.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;

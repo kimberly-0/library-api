@@ -1,5 +1,7 @@
-package dev.kimberly.library.models.book;
+package dev.kimberly.library.controllers;
 
+import dev.kimberly.library.models.Book;
+import dev.kimberly.library.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/books")
@@ -27,24 +28,26 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@Valid @RequestBody Map<String, String> payload) {
-        Book book = new Book (payload.get("title"), payload.get("authorFirstName"), payload.get("authorSurname"));
+    public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
         return new ResponseEntity<Book>(bookService.save(book), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> editBook(@Valid @PathVariable String id, @Valid @RequestBody Map<String, String> payload) {
-        Book book = bookService.findById(id);
-        if (payload.get("title") != null) {
-            book.setTitle(payload.get("title"));
+    public ResponseEntity<Book> editBook(@PathVariable String id, @Valid @RequestBody Book book) {
+
+        Book updatedBook = bookService.findById(id);
+
+        if (book.getTitle() != null && !book.getTitle().trim().isEmpty()) {
+            updatedBook.setTitle(book.getTitle());
         }
-        if (payload.get("authorFirstName") != null) {
-            book.setAuthorFirstName(payload.get("authorFirstName"));
+        if (book.getAuthorFirstName() != null && !book.getAuthorFirstName().trim().isEmpty()) {
+            updatedBook.setAuthorFirstName(book.getAuthorFirstName());
         }
-        if (payload.get("authorSurname") != null) {
-            book.setAuthorSurname(payload.get("authorSurname"));
+        if (book.getAuthorSurname() != null && !book.getAuthorSurname().trim().isEmpty()) {
+            updatedBook.setAuthorSurname(book.getAuthorSurname());
         }
-        return new ResponseEntity<Book>(bookService.save(book), HttpStatus.OK);
+
+        return new ResponseEntity<Book>(bookService.save(updatedBook), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
